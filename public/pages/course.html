@@ -1,0 +1,214 @@
+<h3>课程管理</h3>
+<hr>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>编号</th>
+      <th>课程</th>
+      <th>学分</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+  </tbody>
+</table> 
+<div class="opts">
+  <button class="btn btn-info">添加</button>
+  <button class="btn btn-info">修改</button>
+  <button class="btn btn-info">删除</button>
+</div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><spanaria-hidden="true">&times;</span><tton>
+        <h4 class="modal-title">修改课程信息</h4>
+      </div>
+      <div class="modal-body">
+        <form action="" class="courseForm">
+	          <input type="hidden" name="id">
+	          课程  <input type="text" name="name"><br>
+	          学分  <input type="text" name="credit">
+	          <br>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close<tton>
+        <button type="button" class="btn btn-primary updBtn">Save changes<tton>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript">
+  $(function(){
+    $.getJSON('course/findAll',function(data){
+      // alert(1);
+      data.forEach(function(item){
+        //var birth = item.birth?item.birth.slice(0,item.birth.indexOf('T')):'';
+
+        
+        var newTr=$('<tr>'
+	          	+'<td><input type="checkbox" value="'+item.id +'"></td>'
+	          	+'<td>'+item.name +'</td>'
+	          	+'<td>'+item.credit+'</td>'
+	        	+'</tr>');
+	        $('tbody').append(newTr);
+	      });
+	    });
+//确认修改
+    function update(){
+      $('.updBtn').off();
+      $('.updBtn').on('click',function(){
+        var id = $('.courseForm input[name=id]').val();
+        var name = $('.courseForm input[name=name]').val();
+        var credit = $('.courseForm input[name=credit]').val();
+        
+        var newCourse = {
+            id:id,
+            name:name,
+            credit:credit,
+          };
+        $.ajax('course/update',{
+          'data':newCourse,
+          'method':'POST',
+          'content-Type':'application/json',
+          success:function(data){
+            console.log(data);
+            $('.modal').modal('hide');
+            $('.navleft li').eq(1).trigger('click');
+          }
+        })
+
+      });
+    };
+    //确认添加
+    function save(){
+      $('.updBtn').off();
+      $('.updBtn').on('click',function(){
+        var id = $('.courseForm input[name=id]').val();
+        var name = $('.courseForm input[name=name]').val();
+        var credit = $('.courseForm input[name=credit]').val();
+        
+        var newCourse = {
+            id:id,
+            name:name,
+            credit:credit,
+          };
+        $.ajax('course/save',{
+          'data':newCourse,
+          'method':'POST',
+          'content-Type':'application/json',
+          success:function(data){
+            console.log(data);
+            $('.modal').modal('hide');
+            $('.navleft li').eq(1).trigger('click');
+          }
+        })
+
+      });
+    };
+    //确认删除
+    function dele(){
+      $('.updBtn').off();
+      $('.updBtn').on('click',function(){
+        var id = $('.courseForm input[name=id]').val();
+        
+        
+        var newCourse = {
+            id:id,
+            
+          };
+        $.ajax('course/delete',{
+          'data':newCourse,
+          'method':'POST',
+          'content-Type':'application/json',
+          success:function(data){
+            console.log(data);
+            $('.modal').modal('hide');
+            $('.navleft li').eq(1).trigger('click');
+          }
+        })
+
+      });
+    };
+    
+    //为修改按钮绑定事件
+    $('.opts button').eq(1).off();
+    $('.opts button').eq(1).on('click',function(){
+      var ids = $('tbody input:checkbox:checked').toArray().map(function(item){
+        return item.value;
+      });
+      if(ids.length>0){
+        var id = ids[0];
+        $.getJSON('course/findById?id='+id,function(data){
+          console.log("元素",$('.courseForm input[name=id]'));
+          $('.courseForm input[name=id]').val(data[0].id);
+          $('.courseForm input[name=name]').val(data[0].name);
+          $('.courseForm input[name=credit]').val(data[0].credit);
+          //显示模态框
+          $('.modal').modal('show');
+          update();
+        })
+
+      }else {
+        alert("请选中您要修改的信息");
+      }
+
+    });
+
+    //为添加按钮绑定事件
+    $('.opts button').eq(0).off();
+    $('.opts button').eq(0).on('click',function(){
+      var ids = $('tbody input:checkbox:checked').toArray().map(function(item){
+        return item.value;
+      });
+      // if(ids.length>0){
+      //   var id = ids[0];
+        
+
+      // }else {
+      //   alert("请选中您要修改的信息");
+      // }
+      var id=ids[0];
+      $.getJSON('course/findById?id='+id,function(data){
+          // console.log("元素",$('.courseForm input[name=id]'));
+          // $('.courseForm input[name=id]').val(data[0].id);
+          // $('.courseForm input[name=name]').val(data[0].name);
+          // $('.courseForm input[name=credit]').val(data[0].credit);
+          //显示模态框
+          $('.modal').modal('show');
+          save();
+        });
+
+    });
+
+    //为删除按钮帮定事件
+    $('.opts button').eq(2).off();
+    $('.opts button').eq(2).on('click',function(){
+      var ids = $('tbody input:checkbox:checked').toArray().map(function(item){
+        return item.value;
+      });
+      if(ids.length>0){
+        var id = ids[0];
+        $.getJSON('course/findById?id='+id,function(data){
+          console.log("元素",$('.courseForm input[name=id]'));
+          $('.courseForm input[name=id]').val(data[0].id);
+          $('.courseForm input[name=name]').val(data[0].name);
+          $('.courseForm input[name=credit]').val(data[0].credit);
+          //显示模态框
+          $('.modal').modal('show');
+          dele();
+        })
+
+      }else {
+        alert("请选中您要修改的信息");
+      }
+
+    });
+
+  })
+</script>

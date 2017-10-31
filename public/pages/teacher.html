@@ -1,0 +1,212 @@
+<h3>teacher管理</h3>
+<hr>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>编号</th>
+      <th>教师姓名</th>
+      <th>联系电话</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+  </tbody>
+</table> 
+<div class="opts">
+  <button class="btn btn-info">添加</button>
+  <button class="btn btn-info">修改</button>
+  <button class="btn btn-info">删除</button>
+</div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><spanaria-hidden="true">&times;</span><tton>
+        <h4 class="modal-title">修改教师信息</h4>
+      </div>
+      <div class="modal-body">
+        <form action="" class="teacherForm">
+            <input type="hidden" name="id">
+            教师姓名  <input type="text" name="name"><br>
+            联系电话  <input type="text" name="telephone">
+            <br>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close<tton>
+        <button type="button" class="btn btn-primary updBtn">Save changes<tton>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script type="text/javascript">
+  $(function(){
+    $.getJSON('teacher/findAll',function(data){
+       //alert(1);
+      data.forEach(function(item){
+        //var birth = item.birth?item.birth.slice(0,item.birth.indexOf('T')):'';
+
+        // alert(item.telepone);
+        var newTr=$('<tr>'
+              +'<td><input type="checkbox" value="'+item.id +'"></td>'
+              +'<td>'+item.name +'</td>'
+              +'<td>'+item.telephone+'</td>'
+            +'</tr>');
+          $('tbody').append(newTr);
+        });
+      });
+//确认修改
+function update(){
+  $('.updBtn').off();
+    $('.updBtn').on('click',function(){
+      var id = $('.teacherForm input[name=id]').val();
+      var name = $('.teacherForm input[name=name]').val();
+      var telephone = $('.teacherForm input[name=telephone]').val();
+      
+      var newTeacher = {
+          id:id,
+          name:name,
+          telephone:telephone,
+        };
+      $.ajax('teacher/update',{
+        'data':newTeacher,
+        'method':'POST',
+        'content-Type':'application/json',
+        success:function(data){
+          console.log(data);
+          $('.modal').modal('hide');
+          $('.navleft li').eq(2).trigger('click');
+        }
+      })
+
+    });
+}
+    
+
+    //确认添加
+    function save(){
+      $('.updBtn').off();
+      $('.updBtn').on('click',function(){
+        var id = $('.teacherForm input[name=id]').val();
+        var name = $('.teacherForm input[name=name]').val();
+        var telephone = $('.teacherForm input[name=telephone]').val();
+        
+        var newTeacher = {
+            id:id,
+            name:name,
+            telephone:telephone,
+          };
+        $.ajax('teacher/save',{
+          'data':newTeacher,
+          'method':'POST',
+          'content-Type':'application/json',
+          success:function(data){
+            console.log(data);
+            $('.modal').modal('hide');
+            $('.navleft li').eq(2).trigger('click');
+          }
+        })
+
+      });
+    };
+    //确认删除
+    function dele(){
+      $('.updBtn').off();
+      $('.updBtn').on('click',function(){
+        var id = $('.teacherForm input[name=id]').val();
+        
+        var newTeacher = {
+            id:id,
+          };
+        $.ajax('teacher/delete',{
+          'data':newTeacher,
+          'method':'POST',
+          'content-Type':'application/json',
+          success:function(data){
+            console.log(data);
+            $('.modal').modal('hide');
+            $('.navleft li').eq(2).trigger('click');
+          }
+        })
+
+      });
+    };
+    //为修改按钮绑定事件
+    $('.opts button').eq(1).off();
+    $('.opts button').eq(1).on('click',function(){
+      var ids = $('tbody input:checkbox:checked').toArray().map(function(item){
+        return item.value;
+      });
+      if(ids.length>0){
+        var id = ids[0];
+        $.getJSON('teacher/findById?id='+id,function(data){
+          console.log("元素",$('.teacherForm input[name=id]'));
+          $('.teacherForm input[name=id]').val(data[0].id);
+          $('.teacherForm input[name=name]').val(data[0].name);
+          $('.teacherForm input[name=telephone]').val(data[0].telephone);
+          //显示模态框
+          $('.modal').modal('show')
+          update();
+        })
+
+      }else {
+        alert("请选中您要修改的信息");
+      }
+
+    });
+
+    //为添加按钮绑定事件
+    $('.opts button').eq(0).off();
+    $('.opts button').eq(0).on('click',function(){
+      var ids = $('tbody input:checkbox:checked').toArray().map(function(item){
+        return item.value;
+      });
+      // if(ids.length>0){
+        
+
+      // }else {
+      //   alert("请选中您要修改的信息");
+      // }
+      var id = ids[0];
+        $.getJSON('teacher/findById?id='+id,function(data){
+          // console.log("元素",$('.teacherForm input[name=id]'));
+          // $('.teacherForm input[name=id]').val(data[0].id);
+          // $('.teacherForm input[name=name]').val(data[0].name);
+          // $('.teacherForm input[name=telephone]').val(data[0].telephone);
+          // //显示模态框
+          $('.modal').modal('show')
+          save();
+        })
+
+    });
+
+    //为删除按钮绑定事件
+    $('.opts button').eq(2).off();
+    $('.opts button').eq(2).on('click',function(){
+      var ids = $('tbody input:checkbox:checked').toArray().map(function(item){
+        return item.value;
+      });
+      if(ids.length>0){
+        var id = ids[0];
+        $.getJSON('teacher/findById?id='+id,function(data){
+          console.log("元素",$('.teacherForm input[name=id]'));
+          $('.teacherForm input[name=id]').val(data[0].id);
+          $('.teacherForm input[name=name]').val(data[0].name);
+          $('.teacherForm input[name=telephone]').val(data[0].telephone);
+          //显示模态框
+          $('.modal').modal('show')
+          dele();
+        })
+
+      }else {
+        alert("请选中您要删除的信息");
+      }
+
+    });
+
+  })
+</script>

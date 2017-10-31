@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!-- jquery -->
+	<script type="text/javascript" src="frameworks/jquery-2.1.4/jquery.min.js"></script>
+	<!-- bootstroap -->
+	<script type="text/javascript" src="frameworks/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="frameworks/bootstrap-3.3.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
+	<script type="text/javascript">
+		function initStyle(){
+			//获取浏览器视口的高度
+			var height = $(document).height();
+			var ch = height-130;
+			$('.content').css('height',ch+'px');
+			$('.navleft').css('height',ch+'px');
+		};
+
+		$(function(){
+			initStyle();
+
+			$('.navleft li').on('click',function(){
+				var page = ($(this).attr("page"));
+				$('section.content').load(page);
+			});
+			$('.navleft li').eq(0).trigger('click');
+
+		})
+	</script>
+</head>
+<body>
+	<header class="header">
+		<h2>选课系统</h2>
+		<p>this system testing...</p>
+	</header>
+	<article class="container">
+		<section class="navleft">
+			<ul>
+				<li page="pages/student.html"><a href="javascript:void(0)">学生管理</a></li>
+				<li page="pages/course.html"><a href="javascript:void(0)">课程管理</a></li>
+				<li page="pages/teacher.html"><a href="javascript:void(0)">教师管理</a></li>
+				<li page="pages/clazz.html"><a href="javascript:void(0)">班级管理</a></li>
+				<li page="pages/studentCourse.html"><a href="javascript:void(0)">选择课程</a></li>
+			</ul>
+		</section>
+		<section class="content">
+			
+		</section>
+	</article>
+	<footer class="footer">
+		<p>copyright:xxx</p>
+		<address>
+			江苏省苏州市昆山市巴城镇学院路828号
+		</address>
+	</footer>
+</body>
+</html>
